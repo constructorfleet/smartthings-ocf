@@ -9,10 +9,11 @@ def get_attribute_value(attributes: Any, path: List[str] | str) -> str:
         path = path.split(".")
 
     if len(path) > 1:
-        return get_attribute_value(attributes[path[0]], path[1:])
+        attribute = attributes[path[0]].value
+        for p in path[1:]:
+            attribute = attribute[p]
+        return attribute
 
-    if path[0].endswith("!"):
-        return attributes[path[0].rstrip("!")]
     return attributes[path[0]].value
 
 

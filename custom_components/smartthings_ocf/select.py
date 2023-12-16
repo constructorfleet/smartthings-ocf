@@ -57,7 +57,7 @@ CAPABILITY_TO_SELECT = {
     "samsungce.dishwasherWashingOptions": [
         Map(
             "selectedZone.value",
-            "selectedZone.value.settable!",
+            "selectedZone.settable",
             "setSelectedZone",
             str,
             "Selected Zone",
