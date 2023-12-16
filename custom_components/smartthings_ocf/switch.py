@@ -17,7 +17,7 @@ from .utils import get_attribute_value, sanitize_attribute
 
 Map = namedtuple(
     "map",
-    "attribute on_command off_command on_value off_value name icon extra_state_attributes unavailable_value",
+    "attribute on_command off_command on_value off_value name icon extra_state_attributes",
 )
 
 CAPABILITY_TO_SWITCH = {
