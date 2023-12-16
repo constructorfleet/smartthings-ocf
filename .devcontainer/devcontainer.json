@@ -1,0 +1,75 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/vscode/devcontainers/python:0-3.11",
+	"appPort": [
+		"8123:8123"
+	],
+	"postCreateCommand": "python3 -m homeassistant",
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"installOhMyZsh": true,
+			"installOhMyZshConfig": true,
+			"upgradePackages": true,
+			"username": "automatic",
+			"userUid": "automatic",
+			"userGid": "automatic"
+		},
+		"ghcr.io/jungaretti/features/vim:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"manassahu.openai-developer",
+				"huizhou.githd",
+				"redhat.vscode-yaml",
+				"esbenp.prettier-vscode",
+				"charliermarsh.ruff",
+				"ms-python.pylint",
+				"ms-python.vscode-pylance",
+				"JayBarnes.chatgpt-vscode-plugin"
+			],
+			"settings": {
+				"python.pythonPath": "/usr/local/bin/python",
+				"python.testing.pytestArgs": [
+					"--no-cov"
+				],
+				"editor.formatOnPaste": false,
+				"editor.formatOnSave": true,
+				"editor.formatOnType": true,
+				"files.trimTrailingWhitespace": true,
+				"terminal.integrated.profiles.linux": {
+					"zsh": {
+						"path": "/usr/bin/zsh"
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"yaml.customTags": [
+					"!input scalar",
+					"!secret scalar",
+					"!include_dir_named scalar",
+					"!include_dir_list scalar",
+					"!include_dir_merge_list scalar",
+					"!include_dir_merge_named scalar"
+				],
+				"[python]": {
+					"editor.defaultFormatter": "charliermarsh.ruff"
+				}
+			}
+		}
+	}
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+	// Configure tool-specific properties.
+	// "customizations": {},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

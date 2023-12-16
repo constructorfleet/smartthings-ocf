@@ -10,7 +10,7 @@ from homeassistant.const import (
     TEMP_FAHRENHEIT,
 )
 
-DOMAIN = "smartthings"
+DOMAIN = "smartthings_ocf"
 
 APP_OAUTH_CLIENT_NAME = "Home Assistant"
 APP_OAUTH_SCOPES = ["r:devices:*"]
