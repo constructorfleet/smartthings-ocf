@@ -13,6 +13,7 @@ from pysmartthings.device import DeviceEntity
 
 from . import SmartThingsEntity
 from .const import DATA_BROKERS, DOMAIN
+from .utils import get_attribute_value, sanitize_attribute
 
 Map = namedtuple(
     "map",
@@ -42,6 +43,28 @@ CAPABILITY_TO_SELECT = {
             None,
         )
     ],
+    "samsungce.dishwasherWashingCourse": [
+        Map(
+            "washingCourse",
+            "supportedCourses",
+            "setWashingCourse",
+            str,
+            "Washing Course",
+            "mdi:auto-mode",
+            None,
+        )
+    ],
+    "samsungce.dishwasherWashingOptions": [
+        Map(
+            "selectedZone.value",
+            "selectedZone.value.settable!",
+            "setSelectedZone",
+            str,
+            "Selected Zone",
+            "mdi:layers",
+            None
+        )
+    ]
 }
 
 
@@ -183,25 +206,25 @@ class SmartThingsSelect(SmartThingsEntity, SelectEntity):
     @property
     def unique_id(self) -> str:
         """Return a unique ID."""
-        return f"{self._device.device_id}.{self._attribute}"
+        return f"{self._device.device_id}.{sanitize_attribute(self._attribute)}"
 
     @property
     def options(self) -> list[str]:
         """return valid options"""
         return [
             str(x)
-            for x in self._device.status.attributes[self._select_options_attr].value
+            for x in get_attribute_value(self._device.status.attributes, self._select_options_attr)
         ]
 
     @property
     def current_option(self) -> str | None:
         """return current option"""
-        return str(self._device.status.attributes[self._attribute].value)
+        return str(get_attribute_value(self._device.status.attributes, self._attribute))
 
     @property
     def unit_of_measurement(self) -> str | None:
         """Return unit of measurement"""
-        return self._device.status.attributes[self._attribute].unit
+        return get_attribute_value( self._device.status.attributes, f"{self._attribute}.unit!")
 
     @property
     def icon(self) -> str | None:

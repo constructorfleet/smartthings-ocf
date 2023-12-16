@@ -7,19 +7,11 @@
 	"appPort": [
 		"8123:8123"
 	],
-	"postCreateCommand": "python3 -m homeassistant",
+	"postCreateCommand": "virtualenv /workspaces/smarthings-ocf/.venv && /workspaces/smarthings-ocf/.venv/bin/pip install homeassistant numpy",
+	"remoteUser": "root",
+	"containerUser": "root",
 	"features": {
-		"ghcr.io/devcontainers/features/common-utils:2": {
-			"installZsh": true,
-			"configureZshAsDefaultShell": true,
-			"installOhMyZsh": true,
-			"installOhMyZshConfig": true,
-			"upgradePackages": true,
-			"username": "automatic",
-			"userUid": "automatic",
-			"userGid": "automatic"
-		},
-		"ghcr.io/jungaretti/features/vim:1": {}
+		"ghcr.io/jungaretti/features/vim:1": {},
 	},
 	"customizations": {
 		"vscode": {
@@ -34,7 +26,7 @@
 				"JayBarnes.chatgpt-vscode-plugin"
 			],
 			"settings": {
-				"python.pythonPath": "/usr/local/bin/python",
+				"python.pythonPath": "/usr/local/bin/python3",
 				"python.testing.pytestArgs": [
 					"--no-cov"
 				],

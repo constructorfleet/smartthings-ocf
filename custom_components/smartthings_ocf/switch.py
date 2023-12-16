@@ -13,10 +13,11 @@ from homeassistant.components.switch import SwitchEntity
 
 from . import SmartThingsEntity
 from .const import DATA_BROKERS, DOMAIN
+from .utils import get_attribute_value, sanitize_attribute
 
 Map = namedtuple(
     "map",
-    "attribute on_command off_command on_value off_value name icon extra_state_attributes",
+    "attribute on_command off_command on_value off_value name icon extra_state_attributes unavailable_value",
 )
 
 CAPABILITY_TO_SWITCH = {
@@ -56,6 +57,99 @@ CAPABILITY_TO_SWITCH = {
             None,
         )
     ],
+    "samsungce.dishwasherWashingOptions": [
+        Map(
+            "sanitize",
+            "setSanitize",
+            "setSanitize",
+            True,
+            False,
+            "Sanitize",
+            "mdi:shimmer",
+            None,
+
+        ),
+        Map(
+            "dryPlus",
+            "setDryPlus",
+            "setDryPlus",
+            True,
+            False,
+            "Dry Plus",
+            "mdi:tumble-dryer",
+            None
+        ),
+        Map(
+            "addRinse",
+            "setAddRinse",
+            "setAddRinse",
+            True,
+            False,
+            "Add Rinse",
+            "mdi:shower-head",
+            None
+        ),
+        Map(
+            "hotAirDry",
+            "setHotAirDry",
+            "setHotAirDry",
+            True,
+            False,
+            "Hot Air Dry",
+            "mdi:heat-wave",
+            None
+        ),
+        Map(
+            "stormWash",
+            "setStormWash",
+            "setStormWash",
+            True,
+            False,
+            "Storm Wash",
+            "mdi:weather-pouring",
+            None
+        ),
+        Map(
+            "highTempWash",
+            "setHighTempWash",
+            "setHighTempWash",
+            True,
+            False,
+            "High Temp Wash",
+            "mdi:thermometer-chevron-up",
+            None
+        ),
+        Map(
+            "sanitizingWash",
+            "setSanitizingWash",
+            "setSanitizingWash",
+            True,
+            False,
+            "Sanitizing Wash",
+            "mdi:creation",
+            None
+        ),
+        Map(
+            "speedBooster",
+            "setSpeedBooster",
+            "setSpeedBooster",
+            True,
+            False,
+            "Speed Booster",
+            "mdi:speedometer",
+            None
+        ),
+        Map(
+            "rinsePlus",
+            "setRinsePlus",
+            "setRinsePlus",
+            True,
+            False,
+            "Rinse Plus",
+            "mdi:water-plus",
+            None
+        ),
+    ]
 }
 
 
@@ -66,7 +160,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for device in broker.devices.values():
         for capability in broker.get_assigned(device.device_id, "switch"):
             maps = CAPABILITY_TO_SWITCH[capability]
-            if capability in ("custom.autoCleaningMode", "custom.spiMode"):
+            if capability in ("custom.autoCleaningMode", "custom.spiMode", "samsungce.dishwasherWashingOptions"):
                 switches.extend(
                     [
                         SmartThingsCustomSwitch(
@@ -275,8 +369,8 @@ class SmartThingsCustomSwitch(SmartThingsEntity, SwitchEntity):
         attribute: str,
         on_command: str,
         off_command: str,
-        on_value: str | int | None,
-        off_value: str | int | None,
+        on_value: str | int | bool | None,
+        off_value: str | int | bool | None,
         name: str,
         icon: str | None,
         extra_state_attributes: str | None,
@@ -317,6 +411,11 @@ class SmartThingsCustomSwitch(SmartThingsEntity, SwitchEntity):
         self.async_write_ha_state()
 
     @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return get_attribute_value(self._device.status.attributes, self._attribute) is None
+
+    @property
     def name(self) -> str:
         """Return the name of the switch."""
         return f"{self._device.label} {self._name}"
@@ -324,16 +423,16 @@ class SmartThingsCustomSwitch(SmartThingsEntity, SwitchEntity):
     @property
     def unique_id(self) -> str:
         """Return a unique ID."""
-        return f"{self._device.device_id}.{self._attribute}"
+        return f"{self._device.device_id}.{sanitize_attribute(self._attribute)}"
 
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
         if self._on_value is not None:
-            if self._device.status.attributes[self._attribute].value == self._on_value:
+            if get_attribute_value(self._device.status.attributes, self._attribute) == self._on_value:
                 return True
             return False
-        return self._device.status.attributes[self._attribute].value
+        return get_attribute_value(self._device.status.attributes, self._attribute)
 
     @property
     def icon(self) -> str | None:
